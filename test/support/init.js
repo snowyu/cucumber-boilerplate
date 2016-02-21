@@ -2,6 +2,7 @@ var Yadda = require('yadda'),
     chai = require('chai'),
     path = require('path'),
     glob = require('glob'),
+    mkdirp = require('mkdirp'),
     merge = require('deepmerge'),
     config = require('./configure'),
     beforeHook = require('../hooks/before.js'),
@@ -115,6 +116,10 @@ files.forEach(function (file, i, files) {
                 }
             );
 
+            afterEach(function(done) {
+                takeScreenshotOnFailure(this.currentTest, global.testscope.browser, done);
+            });
+
             after(function (done) {
                 if (++processed === fileCount) {
                     return afterEachHook.call(global.testscope, afterHook.bind(global.testscope, done));
@@ -126,3 +131,21 @@ files.forEach(function (file, i, files) {
         }
     );
 });
+
+function takeScreenshotOnFailure(test, browser, done) {
+    var screenshotPath;
+    if (config && config.options)
+        screenshotPath = config.options.screenshotPath; //|| 'screenshots'
+    if (screenshotPath && test.state != 'passed') {
+        try {
+            fs.statSync(screenshotPath)
+        } catch (e) {
+            mkdirp.sync(screenshotPath)
+        }
+        //var capId = sanitize.caps(browser.desiredCapabilities)
+        //var timestamp = new Date().toJSON().replace(/:/g, '-');
+        screenshotPath = path.join(screenshotPath, 'ERROR_' + test.title.replace(/\W+/g, '_').toLowerCase() + '.png');
+        browser.saveScreenshot(screenshotPath);
+    }
+    done();
+}
