@@ -1,6 +1,5 @@
 var Yadda = require('yadda'),
-    config = require('./configure'),
-    language = Yadda.localisation[upperCaseFirstLetter(config.language)],
+    language = Yadda.localisation.default,
     fs = require('fs'),
     path = require('path'),
     chai = require('chai');
@@ -26,7 +25,3 @@ module.exports = (function () {
     return library;
 
 })();
-
-function upperCaseFirstLetter(word) {
-    return word.slice(0, 1).toUpperCase() + word.slice(1);
-}

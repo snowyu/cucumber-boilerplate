@@ -1,10 +1,11 @@
 var Yadda = require('yadda'),
+    config = require('./configure'),
+    language = Yadda.localisation[upperCaseFirstLetter(config.language)],
     chai = require('chai'),
     path = require('path'),
     glob = require('glob'),
     mkdirp = require('mkdirp'),
     merge = require('deepmerge'),
-    config = require('./configure'),
     beforeHook = require('../hooks/before.js'),
     afterHook = require('../hooks/after.js'),
     beforeEachHook = require('../hooks/beforeEach.js'),
@@ -28,6 +29,10 @@ global.should = chai.should();
  */
 global.testscope = {};
 
+if (!language)
+    console.error('no such language:', upperCaseFirstLetter(config.language));
+else
+    Yadda.localisation.default = language;
 Yadda.plugins.mocha.StepLevelPlugin.init();
 
 /**
@@ -148,4 +153,8 @@ function takeScreenshotOnFailure(test, browser, done) {
         browser.saveScreenshot(screenshotPath);
     }
     done();
+}
+
+function upperCaseFirstLetter(word) {
+    return word.slice(0, 1).toUpperCase() + word.slice(1);
 }
