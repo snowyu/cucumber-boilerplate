@@ -8,7 +8,7 @@
     "postinstall": "selenium-standalone install",
     "selenium-server": "selenium-standalone start",
     "local-webserver": "http-server ./demo-app",
-    "phantomjs": "phantomjs"
+    "phantomjs": "phantomjs --webdriver=4444"
   },
   "repository": {
     "type": "git",
